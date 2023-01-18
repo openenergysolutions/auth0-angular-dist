@@ -100,6 +100,10 @@ export interface AuthConfig {
      */
     clientId: string;
     /**
+     * The path prefix for authorization requests. Defaults to `/authorize`.
+     */
+    authorizePath?: string;
+    /**
      * The default URL where Auth0 will redirect your browser to with
      * the authentication result. It must be added to the
      * "Allowed Callback URLs" field in your Auth0 Application's
