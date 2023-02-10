@@ -104,6 +104,10 @@ export interface AuthConfig {
      */
     authorizePath?: string;
     /**
+     * The path suffix for token requests. Defaults to `oauth/token`.
+     */
+    tokenPath?: string;
+    /**
      * The default URL where Auth0 will redirect your browser to with
      * the authentication result. It must be added to the
      * "Allowed Callback URLs" field in your Auth0 Application's

@@ -640,9 +640,11 @@
              * but only **after** `handleRedirectCallback` is first called
              */
             this.appState$ = this.appStateSubject$.asObservable();
+            console.log('auth0-angular, AuthService constructor called');
             var checkSessionOrCallback$ = function (isCallback) { return rxjs.iif(function () { return isCallback; }, _this.handleRedirectCallback(), rxjs.defer(function () { return _this.auth0Client.checkSession(); })); };
             this.shouldHandleCallback()
                 .pipe(operators.switchMap(function (isCallback) { return checkSessionOrCallback$(isCallback).pipe(operators.catchError(function (error) {
+                console.log('auth0-angular, AuthService, checkSession error: ', error);
                 var config = _this.configFactory.get();
                 _this.navigator.navigateByUrl(config.errorPath || '/');
                 _this.authState.setError(error);
@@ -672,6 +674,7 @@
          * @param options The login options
          */
         AuthService.prototype.loginWithRedirect = function (options) {
+            console.log('auth0-angular, AuthService, loginWithRedirect called, options: ', JSON.stringify(options));
             return rxjs.from(this.auth0Client.loginWithRedirect(options));
         };
         /**
@@ -693,6 +696,7 @@
          */
         AuthService.prototype.loginWithPopup = function (options, config) {
             var _this = this;
+            console.log('auth0-angular, AuthService, loginWithPopup called, options: ', JSON.stringify(options), ', config: ', JSON.stringify(config));
             return rxjs.from(this.auth0Client.loginWithPopup(options, config).then(function () {
                 _this.authState.refresh();
             }));
@@ -714,6 +718,7 @@
          */
         AuthService.prototype.logout = function (options) {
             var _this = this;
+            console.log('auth0-angular, AuthService, logout called, options: ', JSON.stringify(options));
             var logout = this.auth0Client.logout(options) || rxjs.of(null);
             rxjs.from(logout).subscribe(function () {
                 if (options === null || options === void 0 ? void 0 : options.localOnly) {
@@ -751,6 +756,7 @@
         AuthService.prototype.getAccessTokenSilently = function (options) {
             var _this = this;
             if (options === void 0) { options = {}; }
+            console.log('auth0-angular, AuthService, getAccessTokenSilently called, options: ', JSON.stringify(options));
             return rxjs.of(this.auth0Client).pipe(operators.concatMap(function (client) { return options.detailedResponse === true
                 ? client.getTokenSilently(Object.assign(Object.assign({}, options), { detailedResponse: true }))
                 : client.getTokenSilently(options); }), operators.tap(function (token) { return _this.authState.setAccessToken(typeof token === 'string' ? token : token.access_token); }), operators.catchError(function (error) {
@@ -773,6 +779,7 @@
          */
         AuthService.prototype.getAccessTokenWithPopup = function (options) {
             var _this = this;
+            console.log('auth0-angular, AuthService, getAccessTokenWithPopup called, options: ', JSON.stringify(options));
             return rxjs.of(this.auth0Client).pipe(operators.concatMap(function (client) { return client.getTokenWithPopup(options); }), operators.tap(function (token) { return _this.authState.setAccessToken(token); }), operators.catchError(function (error) {
                 _this.authState.setError(error);
                 _this.authState.refresh();
@@ -800,6 +807,7 @@
          */
         AuthService.prototype.getUser = function (options) {
             var _this = this;
+            console.log('auth0-angular, AuthService, getUser called, options: ', JSON.stringify(options));
             return rxjs.defer(function () { return _this.auth0Client.getUser(options); });
         };
         /**
@@ -821,6 +829,7 @@
          */
         AuthService.prototype.getIdTokenClaims = function (options) {
             var _this = this;
+            console.log('auth0-angular, AuthService, getIdTokenClaims called, options: ', JSON.stringify(options));
             return rxjs.defer(function () { return _this.auth0Client.getIdTokenClaims(options); });
         };
         /**
@@ -839,6 +848,7 @@
          */
         AuthService.prototype.handleRedirectCallback = function (url) {
             var _this = this;
+            console.log('auth0-angular, AuthService, handleRedirectCallback called, url: ', url);
             return rxjs.defer(function () { return _this.auth0Client.handleRedirectCallback(url); }).pipe(operators.withLatestFrom(this.authState.isLoading$), operators.tap(function (_b) {
                 var _c = __read(_b, 2), result = _c[0], isLoading = _c[1];
                 var _a;
@@ -869,6 +879,7 @@
          */
         AuthService.prototype.buildAuthorizeUrl = function (options) {
             var _this = this;
+            console.log('auth0-angular, AuthService, buildAuthorizeUrl called, options: ', JSON.stringify(options));
             return rxjs.defer(function () { return _this.auth0Client.buildAuthorizeUrl(options); });
         };
         /**
@@ -881,10 +892,12 @@
          * @returns a URL to the logout endpoint using the parameters provided as arguments.
          */
         AuthService.prototype.buildLogoutUrl = function (options) {
+            console.log('auth0-angular, AuthService, buildLogoutUrl called, options: ', JSON.stringify(options));
             return rxjs.of(this.auth0Client.buildLogoutUrl(options));
         };
         AuthService.prototype.shouldHandleCallback = function () {
             var _this = this;
+            console.log('auth0-angular, AuthService, shouldHandleCallback called, location.search: ', location.search, ', skipRedirectCallback: ', this.configFactory.get().skipRedirectCallback ? 'true' : 'false');
             return rxjs.of(location.search).pipe(operators.map(function (search) {
                 return ((search.includes('code=') || search.includes('error=')) &&
                     search.includes('state=') &&
