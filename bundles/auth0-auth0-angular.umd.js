@@ -353,7 +353,7 @@
         return typeof state === "function" ? receiver === state : state.has(receiver);
     }
 
-    var useragent = { name: '@auth0/auth0-angular', version: '1.11.1' };
+    var useragent = { name: '@auth0/auth0-angular', version: '1.12.4' };
 
     var Auth0ClientFactory = /** @class */ (function () {
         function Auth0ClientFactory() {
@@ -640,7 +640,7 @@
              * but only **after** `handleRedirectCallback` is first called
              */
             this.appState$ = this.appStateSubject$.asObservable();
-            console.log('auth0-angular, AuthService constructor called');
+            console.log('auth0-angular, AuthService constructor called, config: ', JSON.stringify(this.configFactory.get()));
             var checkSessionOrCallback$ = function (isCallback) { return rxjs.iif(function () { return isCallback; }, _this.handleRedirectCallback(), rxjs.defer(function () { return _this.auth0Client.checkSession(); })); };
             this.shouldHandleCallback()
                 .pipe(operators.switchMap(function (isCallback) { return checkSessionOrCallback$(isCallback).pipe(operators.catchError(function (error) {

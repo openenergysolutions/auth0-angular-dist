@@ -9,7 +9,7 @@ export { InMemoryCache, LocalStorageCache, User } from '@auth0/auth0-spa-js';
 import { Router } from '@angular/router';
 import * as i1 from '@angular/common';
 
-var useragent = { name: '@auth0/auth0-angular', version: '1.11.1' };
+var useragent = { name: '@auth0/auth0-angular', version: '1.12.4' };
 
 class Auth0ClientFactory {
     static createClient(configFactory) {
@@ -280,7 +280,7 @@ class AuthService {
          * but only **after** `handleRedirectCallback` is first called
          */
         this.appState$ = this.appStateSubject$.asObservable();
-        console.log('auth0-angular, AuthService constructor called');
+        console.log('auth0-angular, AuthService constructor called, config: ', JSON.stringify(this.configFactory.get()));
         const checkSessionOrCallback$ = (isCallback) => iif(() => isCallback, this.handleRedirectCallback(), defer(() => this.auth0Client.checkSession()));
         this.shouldHandleCallback()
             .pipe(switchMap((isCallback) => checkSessionOrCallback$(isCallback).pipe(catchError((error) => {
