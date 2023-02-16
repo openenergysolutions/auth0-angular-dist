@@ -9,7 +9,7 @@ export { InMemoryCache, LocalStorageCache, User } from '@auth0/auth0-spa-js';
 import { Router } from '@angular/router';
 import * as i1 from '@angular/common';
 
-var useragent = { name: '@auth0/auth0-angular', version: '1.12.4' };
+var useragent = { name: '@auth0/auth0-angular', version: '1.12.5-beta0' };
 
 class Auth0ClientFactory {
     static createClient(configFactory) {
@@ -280,11 +280,9 @@ class AuthService {
          * but only **after** `handleRedirectCallback` is first called
          */
         this.appState$ = this.appStateSubject$.asObservable();
-        console.log('auth0-angular, AuthService constructor called, config: ', JSON.stringify(this.configFactory.get()));
         const checkSessionOrCallback$ = (isCallback) => iif(() => isCallback, this.handleRedirectCallback(), defer(() => this.auth0Client.checkSession()));
         this.shouldHandleCallback()
             .pipe(switchMap((isCallback) => checkSessionOrCallback$(isCallback).pipe(catchError((error) => {
-            console.log('auth0-angular, AuthService, checkSession error: ', error);
             const config = this.configFactory.get();
             this.navigator.navigateByUrl(config.errorPath || '/');
             this.authState.setError(error);
@@ -314,7 +312,6 @@ class AuthService {
      * @param options The login options
      */
     loginWithRedirect(options) {
-        console.log('auth0-angular, AuthService, loginWithRedirect called, options: ', JSON.stringify(options));
         return from(this.auth0Client.loginWithRedirect(options));
     }
     /**
@@ -335,7 +332,6 @@ class AuthService {
      * @param config Configuration for the popup window
      */
     loginWithPopup(options, config) {
-        console.log('auth0-angular, AuthService, loginWithPopup called, options: ', JSON.stringify(options), ', config: ', JSON.stringify(config));
         return from(this.auth0Client.loginWithPopup(options, config).then(() => {
             this.authState.refresh();
         }));
@@ -356,7 +352,6 @@ class AuthService {
      * @param options The logout options
      */
     logout(options) {
-        console.log('auth0-angular, AuthService, logout called, options: ', JSON.stringify(options));
         const logout = this.auth0Client.logout(options) || of(null);
         from(logout).subscribe(() => {
             if (options === null || options === void 0 ? void 0 : options.localOnly) {
@@ -392,7 +387,6 @@ class AuthService {
      * @param options The options for configuring the token fetch.
      */
     getAccessTokenSilently(options = {}) {
-        console.log('auth0-angular, AuthService, getAccessTokenSilently called, options: ', JSON.stringify(options));
         return of(this.auth0Client).pipe(concatMap((client) => options.detailedResponse === true
             ? client.getTokenSilently(Object.assign(Object.assign({}, options), { detailedResponse: true }))
             : client.getTokenSilently(options)), tap((token) => this.authState.setAccessToken(typeof token === 'string' ? token : token.access_token)), catchError((error) => {
@@ -414,7 +408,6 @@ class AuthService {
      * results will be valid according to their expiration times.
      */
     getAccessTokenWithPopup(options) {
-        console.log('auth0-angular, AuthService, getAccessTokenWithPopup called, options: ', JSON.stringify(options));
         return of(this.auth0Client).pipe(concatMap((client) => client.getTokenWithPopup(options)), tap((token) => this.authState.setAccessToken(token)), catchError((error) => {
             this.authState.setError(error);
             this.authState.refresh();
@@ -441,7 +434,6 @@ class AuthService {
      * @param options The options to get the user
      */
     getUser(options) {
-        console.log('auth0-angular, AuthService, getUser called, options: ', JSON.stringify(options));
         return defer(() => this.auth0Client.getUser(options));
     }
     /**
@@ -462,7 +454,6 @@ class AuthService {
      * @param options The options to get the Id token claims
      */
     getIdTokenClaims(options) {
-        console.log('auth0-angular, AuthService, getIdTokenClaims called, options: ', JSON.stringify(options));
         return defer(() => this.auth0Client.getIdTokenClaims(options));
     }
     /**
@@ -480,7 +471,6 @@ class AuthService {
      * @param url The URL to that should be used to retrieve the `state` and `code` values. Defaults to `window.location.href` if not given.
      */
     handleRedirectCallback(url) {
-        console.log('auth0-angular, AuthService, handleRedirectCallback called, url: ', url);
         return defer(() => this.auth0Client.handleRedirectCallback(url)).pipe(withLatestFrom(this.authState.isLoading$), tap(([result, isLoading]) => {
             var _a;
             if (!isLoading) {
@@ -506,7 +496,6 @@ class AuthService {
      * @returns A URL to the authorize endpoint
      */
     buildAuthorizeUrl(options) {
-        console.log('auth0-angular, AuthService, buildAuthorizeUrl called, options: ', JSON.stringify(options));
         return defer(() => this.auth0Client.buildAuthorizeUrl(options));
     }
     /**
@@ -519,11 +508,9 @@ class AuthService {
      * @returns a URL to the logout endpoint using the parameters provided as arguments.
      */
     buildLogoutUrl(options) {
-        console.log('auth0-angular, AuthService, buildLogoutUrl called, options: ', JSON.stringify(options));
         return of(this.auth0Client.buildLogoutUrl(options));
     }
     shouldHandleCallback() {
-        console.log('auth0-angular, AuthService, shouldHandleCallback called, location.search: ', location.search, ', skipRedirectCallback: ', this.configFactory.get().skipRedirectCallback ? 'true' : 'false');
         return of(location.search).pipe(map((search) => {
             return ((search.includes('code=') || search.includes('error=')) &&
                 search.includes('state=') &&
